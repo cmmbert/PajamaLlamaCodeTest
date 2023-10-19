@@ -161,8 +161,9 @@ namespace Platformer.Mechanics
                     else
                     {
                         //We are airborne, but hit something, so cancel vertical up and horizontal velocity.
-                        velocity.x *= 0;
-                        velocity.y = Mathf.Min(velocity.y, 0);
+                        //Bert: I would ask why we do this as this is whats causing the issue with jumping while running into a wall. There might be a good reason why this is needed, but I dont see it.
+                        //velocity.x *= 0;
+                        //velocity.y = Mathf.Min(velocity.y, 0);
                     }
                     //remove shellDistance from actual move distance.
                     var modifiedDistance = hitBuffer[i].distance - shellRadius;
