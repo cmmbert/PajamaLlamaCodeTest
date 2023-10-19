@@ -8,7 +8,7 @@ public class PlatformMovement : MonoBehaviour
 
     public bool StraightMovement;
 
-    public float SinOffset = 1;
+    public float SinOffset = 2;
     public float CosOffset = 1;
 
     public Transform StartPnt;
@@ -20,23 +20,24 @@ public class PlatformMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (StraightMovement)
-            StraightMov();
-        else
+        percTravelled = Mathf.PingPong(Time.time, TimeToReach) / TimeToReach;
+        StraightMov();
+
+        if (!StraightMovement)
             CosSinMov();
     }
 
     public void StraightMov()
     {
-        percTravelled = Mathf.PingPong(Time.time, TimeToReach) / TimeToReach;
-
         var dir = EndPnt.position - StartPnt.position;
-        //Vector3 newPos = dir.normalized * percTravelled;
         transform.position = StartPnt.position + dir * percTravelled;
     }
 
     public void CosSinMov()
     {
-
+        Vector3 newPos = new();
+        newPos.x = Mathf.Cos(percTravelled * Mathf.PI * CosOffset);
+        newPos.y = Mathf.Sin(percTravelled * Mathf.PI * SinOffset);
+        transform.position += newPos;
     }
 }
