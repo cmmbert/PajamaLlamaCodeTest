@@ -80,7 +80,7 @@ public class GrowingPlatform : MonoBehaviour
             var newTile = Instantiate(tile);
             newTile.transform.SetParent(_tilesParent.transform);
             newTile.SetActive(true);
-            newTile.transform.position += new Vector3(currentXOffset, 0, 0);
+            newTile.transform.localPosition = new Vector3(currentXOffset, 0, 0);
             currentXOffset += _tileSize;
         }
     }
