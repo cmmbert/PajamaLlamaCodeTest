@@ -1,3 +1,4 @@
+using Platformer.Mechanics;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -20,8 +21,8 @@ public class GrowingPlatform : MonoBehaviour
     [Range(-1,1)]
     public int Direction = 1;
 
-    [SerializeField]
-    private GameObject _tilesParent;
+
+    public GameObject TilesParent;
 
     [SerializeField]
     private GameObject _leftTile;
@@ -32,14 +33,14 @@ public class GrowingPlatform : MonoBehaviour
 
     private const float _tileSize = 0.4f;
 
-
-    // Start is called before the first frame update
+    private BoxCollider2D _collider;
     void Start()
     {
+        _collider = GetComponent<BoxCollider2D>();
         ChangeNrOfTiles(CurrentNrOfTiles);
     }
 
-    // Update is called once per frame
+
     void Update()
     {
         if(CanGrow)
@@ -64,7 +65,7 @@ public class GrowingPlatform : MonoBehaviour
 
     public void ChangeNrOfTiles(int newNumber)
     {
-        foreach (Transform child in _tilesParent.transform)
+        foreach (Transform child in TilesParent.transform)
         {
             Destroy(child.gameObject);
         }
@@ -78,10 +79,27 @@ public class GrowingPlatform : MonoBehaviour
             if (i == CurrentNrOfTiles-1)
                 tile = _rightTile;
             var newTile = Instantiate(tile);
-            newTile.transform.SetParent(_tilesParent.transform);
+            newTile.transform.SetParent(TilesParent.transform);
             newTile.SetActive(true);
             newTile.transform.localPosition = new Vector3(currentXOffset, 0, 0);
             currentXOffset += _tileSize;
         }
+        var totalSize = CurrentNrOfTiles * _tileSize;
+        _collider.size = new Vector2(totalSize - 0.1f, _tileSize * 0.75f);
+        _collider.offset = new Vector2(_collider.size.x / 2 - 0.15f, 0);
     }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if(collision.CompareTag("Player"))
+        {
+            collision.GetComponent<KinematicObject>()
+                .Bounce((transform.position - collision.transform.position).normalized); //Makes sure the player does not get stuck inside the platform
+        }
+    }
+
+
 }
+
+
+

@@ -302,12 +302,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1eb4e62e77d688a4cb8564d18491abf9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CanGrow: 1
   CurrentNrOfTiles: 3
   MaxNrOfTiles: 5
   MinNrOfTiles: 3
   TileChangeSpeed: 2
   Direction: 1
-  _tilesParent: {fileID: 5881614369863412946}
+  TilesParent: {fileID: 5881614369863412946}
   _leftTile: {fileID: 5881614368366419545}
   _middleTile: {fileID: 5881614369599537567}
   _rightTile: {fileID: 5881614367962857222}
