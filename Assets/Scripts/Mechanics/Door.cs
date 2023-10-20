@@ -17,7 +17,7 @@ public class Door : MonoBehaviour
 
     private void Start()
     {
-        _startPos = transform.position;
+        _startPos = OpenPos.position; 
     }
     void Update()
     {
