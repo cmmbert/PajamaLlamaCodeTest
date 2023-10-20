@@ -19,6 +19,14 @@ namespace Platformer.Mechanics
             {
                 var ev = Schedule<PlayerEnteredDeathZone>();
                 ev.deathzone = this;
+                return;
+            }
+            var e = collider.gameObject.GetComponent<EnemyController>();
+            if(e != null)
+            {
+                var ev = Schedule<EnemyDeath>();
+                ev.enemy = e;
+                return;
             }
         }
     }
