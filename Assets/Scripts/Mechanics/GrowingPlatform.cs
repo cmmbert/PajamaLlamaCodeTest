@@ -21,6 +21,7 @@ public class GrowingPlatform : MonoBehaviour
     [Range(-1,1)]
     public int Direction = 1;
 
+    public bool FlippedSprites;
 
     public GameObject TilesParent;
 
@@ -81,8 +82,11 @@ public class GrowingPlatform : MonoBehaviour
             var newTile = Instantiate(tile);
             newTile.transform.SetParent(TilesParent.transform);
             newTile.SetActive(true);
-            newTile.transform.localPosition = new Vector3(currentXOffset, 0, 0);
+            newTile.transform.localPosition = new Vector3(currentXOffset, 0, 0); 
+            if (FlippedSprites)
+                newTile.transform.localScale = new Vector3(1, 1, 1);
             currentXOffset += _tileSize;
+            
         }
         var totalSize = CurrentNrOfTiles * _tileSize;
         _collider.size = new Vector2(totalSize - 0.1f, _tileSize * 0.75f);
