@@ -10,10 +10,18 @@ namespace Platformer.Mechanics
     /// </summary>
     public class Health : MonoBehaviour
     {
+        public IHealthObserver HealthObserver;
+        public SpriteRenderer Sprite;
         /// <summary>
         /// The maximum hit points for the entity.
         /// </summary>
         public int maxHP = 1;
+
+        public float InvincibilityTime = 1;
+        private float _timeSpentInvincible = 0;
+        private bool _isInvincible;
+        private int _nrOfFlickers = 20;
+        private float _timeSinceLastFlicker = 0;
 
         /// <summary>
         /// Indicates if the entity should be considered 'alive'.
@@ -28,20 +36,32 @@ namespace Platformer.Mechanics
         public void Increment()
         {
             currentHP = Mathf.Clamp(currentHP + 1, 0, maxHP);
+            HealthObserver.OnHealthUpdated(currentHP);
         }
 
         /// <summary>
         /// Decrement the HP of the entity. Will trigger a HealthIsZero event when
         /// current HP reaches 0.
         /// </summary>
-        public void Decrement()
+        public void Decrement(bool bypassInvincibilityFrames = false)
         {
+            if (_isInvincible && !bypassInvincibilityFrames) return;
             currentHP = Mathf.Clamp(currentHP - 1, 0, maxHP);
             if (currentHP == 0)
             {
                 var ev = Schedule<HealthIsZero>();
                 ev.health = this;
             }
+            else
+            {
+                _isInvincible = true;
+            }
+            HealthObserver.OnHealthUpdated(currentHP);
+        }
+
+        public void Revive()
+        {
+            while (currentHP < maxHP) Increment();
         }
 
         /// <summary>
@@ -49,12 +69,36 @@ namespace Platformer.Mechanics
         /// </summary>
         public void Die()
         {
-            while (currentHP > 0) Decrement();
+            while (currentHP > 0) Decrement(true);
         }
 
-        void Awake()
+        void Start()
         {
             currentHP = maxHP;
+            HealthObserver.OnMaxHealthUpdated(maxHP, currentHP);
+        }
+
+        private void Update()
+        {
+            if(_isInvincible)
+            {
+                _timeSinceLastFlicker += Time.deltaTime;
+                if (_timeSinceLastFlicker > InvincibilityTime / _nrOfFlickers)
+                {
+                    _timeSinceLastFlicker -= InvincibilityTime / _nrOfFlickers;
+                    Sprite.enabled = !Sprite.enabled;
+                }
+
+
+                _timeSpentInvincible += Time.deltaTime;
+                if(_timeSpentInvincible > InvincibilityTime)
+                {
+                    _timeSpentInvincible = 0;
+                    _isInvincible = false;
+                    Sprite.enabled = true;
+                }
+
+            }
         }
     }
 }
